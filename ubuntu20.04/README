@@ -1,8 +1,10 @@
-# Download cloud-image
+* Setup
+
+** Download cloud-image
 aria2c "https://cloud-images.ubuntu.com/focal/current/focal-server-cloudimg-amd64.img"
 sudo mv focal-server-cloudimg-amd64.img /var/lib/libvirt/images/
 
-# virt-install
+** virt-install
 sudo qemu-img create -b /var/lib/libvirt/images/focal-server-cloudimg-amd64.img -f qcow2 -F qcow2 /var/lib/libvirt/images/ubuntu20.04.qcow2 50G
 sudo cloud-localds -v --network-config=network.cfg cloud-init.img user-data.cfg
 sudo virt-install --name ubuntu20.04 \
@@ -15,12 +17,13 @@ sudo virt-install --name ubuntu20.04 \
   --network default \
   --console pty,target_type=serial
 
-# remove cdrom for cloud-init.img
+** remove cdrom for cloud-init.img
 sudo EDITOR=nvim virsh edit ubuntu20.04
 
-# clone vm
-sudo virt-clone --original ubuntu20.04 --name 'k8s-master-1' --auto-clone
+-------------------------------------------------------------------------------
 
-# set hostname for new vm
-virsh start --console netdev-ubuntu20.04
+* create vm
+
+sudo virt-clone --original ubuntu20.04 --name 'netdev-ubuntu20.04' --auto-clone
+sudo virsh start --console 'netdev-ubuntu20.04'
 sudo hostnamectl set-hostname 'netdev-ubuntu20.04'
